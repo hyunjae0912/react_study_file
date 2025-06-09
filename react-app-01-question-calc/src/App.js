@@ -8,8 +8,6 @@ function App() {
   const [answer, serAnswer] = useState("");
 
   function buttonClick(value) {
-    const newNumber = number + value.toString();
-    setNum(newNumber);
     if (value === "=") {
       Calculate();
     }
@@ -17,10 +15,14 @@ function App() {
       setNum("");
       serAnswer("");
     }
+    const newNumber = number + value.toString();
+    setNum(newNumber);
   }
 
   function Calculate() {
-    const result = eval(number); // 예: "2+3*4"
+    // eval() 함수는 문자열로 된 JavaScript 코드를 실행한다.
+    // 그냥 실무에선 사용하지 않는 것이 좋다.
+    const result = eval(number);
     serAnswer(result);
   }
 
