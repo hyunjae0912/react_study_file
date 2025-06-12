@@ -1,8 +1,9 @@
 {
-  "name": "react-app-01-question-calc",
+  "name": "react-app-3-redux-toolkit",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",

@@ -1,65 +1,39 @@
-import styled from "styled-components";
+// App.js
+import React from 'react';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import Todo from './Todo';
 
-const MiddleFont = styled.h1`
-  text-align: center;
-`;
+// 2. 리듀서 함수 정의
+const todoReducer = (state = [], action) => {
+  switch (action.type) {
+    case 'ADD':
+      const newId = state.length === 0 ? 0 : state[state.length - 1].id + 1;
+      return [...state, { id: newId, text: action.text }];
 
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-`;
+    case 'DELETE':
+      return state.filter(todo => todo.id !== action.id);
 
-const Vanilla = styled.button`
-  width: 200px;
-  height: 200px;
-  background-color: #fff7cc;
-  border: 3px solid #eee;
-  border-radius: 15px;
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  margin: 10px;
-`;
+    case 'RESET':
+      return [];
 
-const Choco = styled.button`
-  width: 200px;
-  height: 200px;
-  background-color: chocolate;
-  border: 3px solid #eee;
-  border-radius: 15px;
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  margin: 10px;
-`;
+    default:
+      return state;
+  }
+};
 
-const Strowbarray = styled.button`
-  width: 200px;
-  height: 200px;
-  background-color: #ffd1dc;
-  border: 3px solid #eee;
-  border-radius: 15px;
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  margin: 10px;
-`;
+// 3. 스토어 생성
+const store = createStore(todoReducer);
 
 function App() {
   return (
-    <div className="App">
-      <MiddleFont>아이스크림을 골라보세요</MiddleFont>
-
-      <ButtonContainer>
-        <Vanilla>바닐라</Vanilla>
-        <Choco>초콜랫</Choco>
-        <Strowbarray>딸기</Strowbarray>
-      </ButtonContainer>
-
-
-    </div>
+    // 4. Provider로 앱에 스토어 연결
+    <Provider store={store}>
+      <div>
+        <h3>To-Do List</h3>
+        <Todo />
+      </div>
+    </Provider>
   );
 }
 

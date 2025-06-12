@@ -1,0 +1,17 @@
+/* 바디 스타일 */
+
+body {
+    padding: 20px;
+}
+
+/* App이라는 div 태그에 테두리 추가 */
+.App, .App > div div {
+    border: 5px solid red;
+    margin: 10px;
+}
+
+/* grid라는 div 태그에 스타일 추가 */
+#grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 1ㄷ1 */
+}
