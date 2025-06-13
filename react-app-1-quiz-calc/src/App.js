@@ -1,89 +1,66 @@
-import { useState } from 'react';
+import { createStore } from "redux";
+import Calc from './Calc';
+import { Provider } from 'react-redux';
+import { configureStore, createSlice } from "@reduxjs/toolkit";
 
-// 계산기 앱 만들기
+
+
+// 계산기에서 result state 만 redux로 관리하는 중
+// redux => redux 
+
+// slice를 먼저 생성하고 slice 여러개를 모아서 store 생성
+// slice 특정 지능에 필요한 store 저장
+
+export const calcSlice = createSlice({
+  name: 'calc',
+  initialState: { result: null },
+  reducers: {
+    '+': (state, action) => {
+      state.result = action.payload.num1 + action.payload.num2;
+    },
+    '-': (state, action) => {
+      state.result = action.payload.num1 - action.payload.num2;
+    },
+    '*': (state, action) => {
+      state.result = action.payload.num1 * action.payload.num2;
+    },
+    '/': (state, action) => {
+      state.result = action.payload.num1 / action.payload.num2;
+    },
+    '0': (state) => {
+      state.result = null;
+    },
+  },
+});
+
+
+const store = configureStore({
+  reducer: {
+    calc: calcSlice.reducer,
+  },
+});
+
+
 
 function App() {
-  const [num1, setNum1] = useState(null); // 입력한 첫번째 숫자
-  const [num2, setNum2] = useState(null); // 입력한 두번째 숫자
-  const [operator, setOperator] = useState(null); // 입력한 연산자
-  const [input, setInput] = useState(''); // 현재 식
-  const [result, setResult] = useState(null); // 결과
 
-  // 숫자를 입력하는 함수
-  const inputNumber = (value) => {
-    setInput(input + value); // 현재 입력된 식 업데이트 (숫자와 연산자)
 
-    if (operator === null) {
-      setNum1(value); // 첫 번째 숫자 저장
-    } else {
-      setNum2(value); // 두 번째 숫자 저장
-    }
-  };
+    // redux toolkit 시능
+    // 기존의 reducer은 state의 불변성을 유지하기 위해
+    // state를 복제한 다음에 사용했음
+    // 하지만 toolkit에서는 state를 바로 사용할 수 있다.
 
-  // 연산자를 입력하는 함수
-  const inputOper = (value) => {
-    setInput(input + value);
-    setOperator(value);
-  };
 
-  // 결과 계산
-  const calculate = () => {
 
-    let tempResult = 0;
 
-    switch (operator) {
-      case '+':
-        tempResult = num1 + num2;
-        break;
-      case '-':
-        tempResult = num1 - num2;
-        break;
-      case '*':
-        tempResult = num1 * num2;
-        break;
-      case '/':
-        tempResult = num1 / num2;
-        break;
-      default:
-        tempResult = 0;
-    }
-
-    setResult(tempResult);
-  };
-
-  // 입력 초기화
-  const clear = () => {
-    setNum1(null);
-    setNum2(null);
-    setOperator(null);
-    setResult(null);
-    setInput('');
-  };
 
   return (
     <div>
       <h3>계산기</h3>
-      <div>
-        <div><span>식:</span>{input}</div>
-        <div><span>결과:</span>{result}</div>
-      </div>
-
-      <div>
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((num) => (
-          <button key={num} onClick={() => inputNumber(num)}>
-            {num}
-          </button>
-        ))}
-      </div>
-      <div>
-        {['+', '-', '*', '/'].map((op) => (
-          <button key={op} onClick={() => inputOper(op)}>
-            {op}
-          </button>
-        ))}
-      </div>
-      <button onClick={calculate}>=</button>
-      <button onClick={clear}>C</button>
+      {/* redux의 provider로 store를 주입 */}
+      <Provider store={store}>
+        <Calc></Calc>
+      </Provider>
     </div>
   );
 }
