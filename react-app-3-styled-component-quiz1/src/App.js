@@ -49,15 +49,19 @@ function App() {
         onChange={(e) => setInput(e.target.value)}
         placeholder="새 할 일 입력"
       />
+      
       {/* 추가 버튼 */}
+
       <button onClick={()=>{
         // 디스패치에 'ADD' 액션 전달
         todoDispatch({ type: 'ADD', text: input });
         setInput(''); // 추가가 끝났으면 입력필드 초기화
       }}>추가</button>
+
       {/* 초기화 버튼 */}
       <button onClick={() => todoDispatch({ type: 'RESET' })}>초기화</button>
       {/* 할일 목록 */}
+
       <ul>
         {todo.map(todo => (
           <li key={todo.id}>
