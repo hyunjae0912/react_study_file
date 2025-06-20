@@ -8,15 +8,10 @@ import Col from 'react-bootstrap/Col';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Context } from '..';
+import { useSelector } from 'react-redux';
 
 // useNavigate: 다른 페이지로 이동하는 기능
 
-// 가짜 데이터를 DB에 있는 데이터로 변경
-// const data = [
-//   { no:1, title:'1번', content:'1번입니다', writer:'둘리', regDate:'2024-11-08', modDate:'2024-11-08' },
-//   { no:2, title:'2번', content:'2번입니다', writer:'또치', regDate:'2024-11-09', modDate:'2024-11-09' },
-//   { no:3, title:'3번', content:'3번입니다', writer:'도우너', regDate:'2024-11-10', modDate:'2024-11-10' }
-// ];
 
 const BoardList = () => {
 
@@ -24,30 +19,20 @@ const BoardList = () => {
   const navigate = useNavigate();
   let [data, setDate] = useState(null);
   const { host } = useContext(Context);
-
+  const token = useSelector(state => state.member.token);
   
-  // await는 async 함수 안에서만 가능 (둘이 짝궁이라 붙어있어야함)
-  // api를 호출하는 함수
-  // 메소드 종류
-  // axios ajax fetch와 같이 api를 호출하는 함수는 비동기 함수
-  // 비동기 함수를 사용할떄는 await async 키워드를 함께 사용
   const apiCall = async () => {
 
     // 나중에 배포를 위해 api를 바뀜 
     const respone = await axios.get(`${host}/board/list`, {
       headers: {
-        Authorization : 'eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NTAzMTc4MTUsImV4cCI6MTc1MjkwOTgxNSwic3ViIjoiYWRtaW4ifQ._cSrDU5CSnM6yHbugpAnHrmYrN-Nt407mYKRJlSIseQ'
+        Authorization : token
       }
     });
 
     setDate(respone.data);
   }
 
-  // API 호출 > 상태 업데이트 > 컴포넌트 리렌더링 > 다시 API 호출.. 무한루프 됨
-//  apiCall();
-
-// 이것을 해결하기위해 useEffect를 사용한다
-  // api는 직접 호출하지는 않지만 빈 배열은 컴포넌트가 처음 로드될 때 한번만 실행하겠다는 의미이다.
   useEffect( () => {
     apiCall();
   }, [] );

@@ -1,4 +1,5 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { CustomCard, CustomContainer } from '../components/Styles'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -18,6 +19,8 @@ const BoardRegister = () => {
   const { host } = useContext(Context);
   // navigate 페이지 이동 시 사용
   const navigate = useNavigate();
+  
+  const token = useSelector(state => state.member.token);
 
 
 
@@ -36,7 +39,7 @@ const BoardRegister = () => {
     // post는 매개변수가 3개이며 순서대로 주소, 게시물데이터, 헤더이다.
     const respone = await axios.post(`${host}/board/register`, formDate, {
       headers: {
-        Authorization : 'eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NTAzMTc4MTUsImV4cCI6MTc1MjkwOTgxNSwic3ViIjoiYWRtaW4ifQ._cSrDU5CSnM6yHbugpAnHrmYrN-Nt407mYKRJlSIseQ'
+        Authorization : token
       }
     });
     
@@ -70,29 +73,7 @@ const BoardRegister = () => {
     }
 
     setBoard(newBoard);
-    console.log(newBoard);
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   return (

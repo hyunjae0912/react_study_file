@@ -2,6 +2,9 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { createContext } from 'react';
+import store from './store/store';
+import { Provider, useDispatch } from 'react-redux';
+import { login } from './store/memberSlice';
 
 // Router: URL 주소에따라 화면을 전환하는 기능
 
@@ -12,11 +15,27 @@ export const Context = createContext();
 
 const host = 'http://localhost:8080';
 
+const dispatch = store.dispatch;
+
+// 화면이 새로고침 되었을 때 로그인 상태 유지하기
+const user = localStorage.getItem('user');
+const token = localStorage.getItem('token');
+
+
+if(user != null){
+  const userObj = JSON.parse(user);
+  dispatch(login( { token: token, user:user } ));
+  console.log(userObj);
+}
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Context.Provider value={{ host }}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
   </Context.Provider>
 );

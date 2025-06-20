@@ -1,5 +1,7 @@
+
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { CustomCard, CustomContainer } from '../components/Styles'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -7,39 +9,20 @@ import { Context } from '../index';
 import axios from 'axios';
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const BoardModify = () => {
-
+  const token = useSelector(state => state.member.token);
+  
   // 게시물 데이터
   let [board , setBoard]= useState(null);
   const { host } = useContext(Context);
   const params = useParams();
-
-
-
+  
+  
+  
   const apiCall = async () => {
     const respone = await axios.get(`${host}/board/read?no=${params.no}`, {
       headers: {
-        Authorization : 'eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NTAzMTc4MTUsImV4cCI6MTc1MjkwOTgxNSwic3ViIjoiYWRtaW4ifQ._cSrDU5CSnM6yHbugpAnHrmYrN-Nt407mYKRJlSIseQ'
+        Authorization : token
       }
     })
     if(respone.status === 200){
@@ -50,23 +33,67 @@ const BoardModify = () => {
   useEffect( () => {
     apiCall();
   }, [] )
-
-
+  
+  
+  const navigate = useNavigate();
   // 값바꾸면 실행됨
   const handlerChange = (event) => {
-    console.log(event.target.name, event.target.value);
-
     const { name, value, files } = event.target;
-
     const newBoard = {...board};
 
+    
+    // 파라미터 형식 : json문자열 또는 폼데이터
+
+    
+    if(name === 'uploadfile'){
+      newBoard[name] = files[0];
+    }
+    else{
+      newBoard[name] = value;
+    }
     newBoard[name] = value;
     setBoard(newBoard);
   }
 
 
+  const handlerSubmit = async (event) => {
+    event.preventDefault();
 
+        const formDate = new FormData();
+    // 폼데이터 형식
+    formDate.append('no', board.no);
+    formDate.append('title', board.title);
+    formDate.append('content', board.content);
+    
+    // 파일은 값이 존제하면 넣기
+    if(board.uploadfile != null){
+    formDate.append('uploadfile', board.uploadfile);
+    }
+    // api 호출해서 게시물 수정
+    const respone = await axios.put(`${host}/board/modify`,formDate ,{
+      headers: {
+        Authorization : token
+      }
+    })
+    setBoard(respone.data);
+    if(respone.status === 204){
+      navigate(`/board/read/${board.no}`)
+    }
 
+  };
+
+  const handleRemove = async () => {
+    
+    const respone = await axios.delete(`${host}/board/remove?no=${board.no}`, {
+      headers: {
+        Authorization : token
+      }
+    });
+
+    // react 내부주소
+    navigate('/board/list');
+
+  }
 
 
 
@@ -78,7 +105,7 @@ const BoardModify = () => {
         <h3>게시물 수정</h3>
         { 
           board!==null && 
-          <Form>
+          <Form onSubmit={handlerSubmit}>
             <Form.Group className="mb-3" controlId="board.no">
               <Form.Label>번호</Form.Label>
               <Form.Control type="text" value={board.no} readOnly/>
@@ -118,7 +145,8 @@ const BoardModify = () => {
               저장
             </Button>
 
-            <Button variant="danger">삭제</Button>
+
+            <Button variant="danger" onClick={handleRemove}>삭제</Button>
           </Form>        
         }
       </CustomContainer>
